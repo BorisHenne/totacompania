@@ -128,13 +128,19 @@ export default function ProgrammationPage() {
 
     if (timeFilter === 'upcoming') {
       events = events.filter(e => {
-        const eventDate = new Date(e.date).toISOString().split('T')[0];
-        return eventDate >= today;
+        // Utiliser endDate si disponible, sinon date de début
+        const eventEndDate = e.endDate 
+          ? new Date(e.endDate).toISOString().split('T')[0]
+          : new Date(e.date).toISOString().split('T')[0];
+        return eventEndDate >= today;
       });
     } else if (timeFilter === 'past') {
       events = events.filter(e => {
-        const eventDate = new Date(e.date).toISOString().split('T')[0];
-        return eventDate < today;
+        // Un événement est passé si sa date de fin (ou date de début) est antérieure à aujourd'hui
+        const eventEndDate = e.endDate 
+          ? new Date(e.endDate).toISOString().split('T')[0]
+          : new Date(e.date).toISOString().split('T')[0];
+        return eventEndDate < today;
       });
     }
 
@@ -281,8 +287,11 @@ export default function ProgrammationPage() {
                     {events.map((event, index) => {
                       const dateInfo = formatDate(event.date);
                       const typeInfo = eventTypes[event.type] || { label: event.type, color: '#844cfc', icon: Calendar };
-                      const eventDateStr = new Date(event.date).toISOString().split('T')[0];
-                      const isPast = eventDateStr < today;
+                      // Utiliser endDate si disponible pour déterminer si l'événement est passé
+                      const eventEndDateStr = event.endDate 
+                        ? new Date(event.endDate).toISOString().split('T')[0]
+                        : new Date(event.date).toISOString().split('T')[0];
+                      const isPast = eventEndDateStr < today;
                       const Icon = typeInfo.icon;
 
                       return (
