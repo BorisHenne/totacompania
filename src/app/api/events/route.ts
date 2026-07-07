@@ -35,9 +35,17 @@ export async function GET(request: NextRequest) {
     let query: any = { published: true };
 
     if (upcoming) {
-      query.date = { $gte: new Date() };
+      // Un événement est à venir si sa date de fin (ou date de début si pas de fin) est >= aujourd'hui
+      query.$or = [
+        { endDate: { $gte: new Date() } },
+        { endDate: { $exists: false }, date: { $gte: new Date() } }
+      ];
     } else if (past) {
-      query.date = { $lt: new Date() };
+      // Un événement est passé si sa date de fin (ou date de début si pas de fin) est < aujourd'hui
+      query.$or = [
+        { endDate: { $lt: new Date() } },
+        { endDate: { $exists: false }, date: { $lt: new Date() } }
+      ];
     }
 
     if (type) {
