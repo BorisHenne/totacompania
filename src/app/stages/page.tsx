@@ -150,7 +150,7 @@ export default function StagesPage() {
           >
             <h2 className="font-title text-3xl md:text-4xl inline-flex items-center gap-3">
               <Calendar className="w-8 h-8 text-[#844cfc]" />
-              Stages 2025-2026
+              Stages de l&apos;année scolaire
             </h2>
           </motion.div>
 
