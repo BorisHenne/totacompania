@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import {
   Plus,
   Trash2,
@@ -127,6 +127,31 @@ export default function TheaterGroupsAdmin() {
     });
   };
 
+  const handleReorder = async (newGroups: TheaterGroup[]) => {
+    // Update local state immediately
+    const reorderedGroups = newGroups.map((group, index) => ({
+      ...group,
+      order: index
+    }));
+    setGroups(reorderedGroups);
+
+    // Save new order to backend
+    try {
+      await Promise.all(
+        reorderedGroups.map(group =>
+          fetch(`/api/admin/theater-groups/${group._id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(group)
+          })
+        )
+      );
+    } catch (error) {
+      console.error('Error saving order:', error);
+      fetchGroups(); // Revert on error
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -179,18 +204,15 @@ export default function TheaterGroupsAdmin() {
         </div>
       ) : (
         <div className="bg-white shadow-sm border border-[#844cfc]/10 overflow-hidden">
-          <div className="divide-y divide-[#844cfc]/10">
-            {groups.map((group, index) => (
-              <motion.div
+          <Reorder.Group axis="y" values={groups} onReorder={handleReorder} className="divide-y divide-[#844cfc]/10">
+            {groups.map((group) => (
+              <Reorder.Item
                 key={group._id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => setEditingGroup(group)}
+                value={group}
                 className={`p-4 hover:bg-[#dbcbff]/10 transition-colors cursor-pointer ${!group.active ? 'opacity-50' : ''}`}
               >
                 <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 cursor-grab text-gray-400 hover:text-gray-600">
+                  <div className="flex-shrink-0 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600">
                     <GripVertical className="w-5 h-5" />
                   </div>
 
@@ -201,7 +223,10 @@ export default function TheaterGroupsAdmin() {
                     <GraduationCap className="w-6 h-6" />
                   </div>
 
-                  <div className="flex-grow min-w-0">
+                  <div
+                    className="flex-grow min-w-0"
+                    onClick={() => setEditingGroup(group)}
+                  >
                     <h3 className="font-medium text-gray-900">{group.name}</h3>
                     <p className="text-sm text-[#844cfc] font-medium">{group.ageRange}</p>
                     <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
@@ -247,9 +272,9 @@ export default function TheaterGroupsAdmin() {
                     </button>
                   </div>
                 </div>
-              </motion.div>
+              </Reorder.Item>
             ))}
-          </div>
+          </Reorder.Group>
         </div>
       )}
 
@@ -352,7 +377,7 @@ export default function TheaterGroupsAdmin() {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-4">
+                <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Tarif annuel (e)
@@ -368,21 +393,33 @@ export default function TheaterGroupsAdmin() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Couleur
+                      Couleur du groupe
                     </label>
                     <div className="flex gap-2">
                       <input
                         type="color"
                         value={editingGroup.color || '#844cfc'}
                         onChange={(e) => setEditingGroup({ ...editingGroup, color: e.target.value })}
-                        className="w-12 h-10 border border-[#844cfc]/20 cursor-pointer"
+                        className="w-16 h-10 border border-[#844cfc]/20 cursor-pointer rounded"
                       />
-                      <input
-                        type="text"
-                        value={editingGroup.color || '#844cfc'}
-                        onChange={(e) => setEditingGroup({ ...editingGroup, color: e.target.value })}
-                        className="flex-1 px-3 py-2 border border-[#844cfc]/20 focus:border-[#844cfc] focus:ring-1 focus:ring-[#844cfc] outline-none"
-                      />
+                      <div className="flex-1 relative">
+                        <input
+                          type="text"
+                          value={editingGroup.color || '#844cfc'}
+                          onChange={(e) => setEditingGroup({ ...editingGroup, color: e.target.value })}
+                          className="w-full px-3 py-2 border border-[#844cfc]/20 focus:border-[#844cfc] focus:ring-1 focus:ring-[#844cfc] outline-none"
+                          placeholder="#844cfc"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-2 flex items-center gap-2">
+                      <div 
+                        className="w-8 h-8 rounded flex items-center justify-center text-white text-xs font-medium shadow-sm"
+                        style={{ backgroundColor: editingGroup.color || '#844cfc' }}
+                      >
+                        <GraduationCap className="w-5 h-5" />
+                      </div>
+                      <span className="text-xs text-gray-500">Aperçu de la couleur</span>
                     </div>
                   </div>
                 </div>
