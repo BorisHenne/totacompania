@@ -199,17 +199,6 @@ export default function EcolePage() {
             <p className="font-title text-2xl md:text-3xl text-[#dbcbff]">
               L&apos;École de Théâtre
             </p>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-              className="mt-8"
-            >
-              <span className="inline-block bg-[#f02822] text-white px-6 py-3 font-body text-lg" style={{ transform: "rotate(-2deg)" }}>
-                INSCRIPTIONS 2025 - 2026
-              </span>
-            </motion.div>
           </motion.div>
         </div>
       </AuroraHero>
@@ -227,7 +216,7 @@ export default function EcolePage() {
             className="max-w-3xl mx-auto text-center"
           >
             <p className="text-xl text-gray-700 leading-relaxed">
-              Tota Compania c&apos;est aussi plus de <strong className="text-[#844cfc]">80 amateurs</strong> encadrés par une équipe professionnelle,
+              Tota Compania c&apos;est aussi plus de <strong className="text-[#844cfc]">100 amateurs</strong> encadrés par une équipe professionnelle,
               bénévoles lors des événements, des stages... Une véritable famille du théâtre !
             </p>
           </motion.div>
@@ -403,11 +392,7 @@ export default function EcolePage() {
           >
             <div className="bg-gradient-to-br from-[#dbcbff]/30 to-white p-8 shadow-lg text-center border border-[#844cfc]/10">
               <Calendar className="w-12 h-12 text-[#844cfc] mx-auto mb-4" />
-              <h3 className="font-title text-2xl mb-2" style={{ color: '#f02822' }}>Infos & Inscriptions</h3>
-              <p className="text-gray-600 mb-6 text-sm">
-                Les tarifs et horaires peuvent évoluer chaque année.
-                Contactez-nous pour obtenir les informations de la saison en cours.
-              </p>
+              <h3 className="font-title text-2xl mb-6" style={{ color: '#f02822' }}>Infos & Inscriptions</h3>
               {contactInfo && (
                 <div className="border-t border-[#844cfc]/20 pt-6 space-y-3">
                   <a href={`tel:${contactInfo.phone}`} className="flex items-center justify-center gap-2 text-gray-600 hover:text-[#844cfc] transition-colors">
