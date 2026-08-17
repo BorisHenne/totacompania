@@ -1,5 +1,6 @@
 'use client';
 
+import NewsletterEditor from '@/components/admin/NewsletterEditor';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -251,7 +252,7 @@ export default function NewsletterAdmin() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           subject: emailSubject,
-          content: emailContent,
+          htmlContent: emailContent,
           testEmail: testEmail
         })
       });
@@ -289,7 +290,7 @@ export default function NewsletterAdmin() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           subject: emailSubject,
-          content: emailContent,
+          htmlContent: emailContent,
           sendToAll: true
         })
       });
@@ -603,122 +604,9 @@ export default function NewsletterAdmin() {
               />
             </div>
 
-            {/* Toolbar */}
-            <div className="flex flex-wrap items-center gap-1 mb-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
-              <button
-                type="button"
-                onClick={() => insertFormatting('bold')}
-                className="p-2 hover:bg-gray-200 rounded transition-colors"
-                title="Gras"
-              >
-                <Bold className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => insertFormatting('italic')}
-                className="p-2 hover:bg-gray-200 rounded transition-colors"
-                title="Italique"
-              >
-                <Italic className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => insertFormatting('underline')}
-                className="p-2 hover:bg-gray-200 rounded transition-colors"
-                title="Souligne"
-              >
-                <Underline className="w-4 h-4" />
-              </button>
-              <div className="w-px h-6 bg-gray-300 mx-1" />
-              <button
-                type="button"
-                onClick={() => insertFormatting('list')}
-                className="p-2 hover:bg-gray-200 rounded transition-colors"
-                title="Liste"
-              >
-                <List className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => insertFormatting('link')}
-                className="p-2 hover:bg-gray-200 rounded transition-colors"
-                title="Lien"
-              >
-                <Link2 className="w-4 h-4" />
-              </button>
-              <div className="w-px h-6 bg-gray-300 mx-1" />
-              <div className="relative group">
-                <button
-                  type="button"
-                  className="p-2 hover:bg-gray-200 rounded transition-colors"
-                  title="Emojis"
-                >
-                  <Smile className="w-4 h-4" />
-                </button>
-                <div className="absolute left-0 top-full mt-1 p-2 bg-white border border-gray-200 rounded-lg shadow-lg hidden group-hover:flex flex-wrap gap-1 w-48 z-10">
-                  {commonEmojis.map((emoji) => (
-                    <button
-                      key={emoji}
-                      type="button"
-                      onClick={() => insertEmoji(emoji)}
-                      className="p-1 hover:bg-gray-100 rounded text-lg"
-                    >
-                      {emoji}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex-1" />
-              <button
-                type="button"
-                onClick={() => setShowPreview(!showPreview)}
-                className={`p-2 rounded transition-colors ${showPreview ? 'bg-primary text-white' : 'hover:bg-gray-200'}`}
-                title={showPreview ? 'Masquer apercu' : 'Afficher apercu'}
-              >
-                {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
+            {/* Rich Text Editor */}
+            <NewsletterEditor content={emailContent} onChange={setEmailContent} />
 
-            {/* Content */}
-            <div className={`grid gap-4 ${showPreview ? 'grid-cols-2' : 'grid-cols-1'}`}>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Contenu du message
-                </label>
-                <textarea
-                  id="email-content"
-                  value={emailContent}
-                  onChange={(e) => setEmailContent(e.target.value)}
-                  placeholder="Ecrivez votre message ici...&#10;&#10;Variables disponibles:&#10;{{prenom}} - Prenom du destinataire&#10;{{nom}} - Nom du destinataire&#10;{{email}} - Email du destinataire"
-                  rows={12}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono text-sm"
-                />
-              </div>
-
-              {showPreview && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Apercu
-                  </label>
-                  <div className="h-[300px] overflow-y-auto p-4 border border-gray-200 rounded-lg bg-gray-50">
-                    <div className="prose prose-sm max-w-none">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: emailContent
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-primary underline">$1</a>')
-                            .replace(/\n/g, '<br />')
-                            .replace(/{{prenom}}/g, '<span class="bg-yellow-100 px-1">Jean</span>')
-                            .replace(/{{nom}}/g, '<span class="bg-yellow-100 px-1">Dupont</span>')
-                            .replace(/{{email}}/g, '<span class="bg-yellow-100 px-1">jean@exemple.fr</span>')
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
 
             {/* Send Result */}
             {sendResult && (
