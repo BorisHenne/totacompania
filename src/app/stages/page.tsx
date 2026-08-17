@@ -77,7 +77,7 @@ export default function StagesPage() {
               <Sparkles className="w-10 h-10 text-white" />
             </motion.div>
             <h1 className="font-title text-5xl md:text-6xl lg:text-7xl text-white mb-4 uppercase tracking-wide">Stages Enfants</h1>
-            <p className="text-xl md:text-2xl text-[#dbcbff] max-w-2xl mx-auto">{"\u00c9couvrir le th\u00e9\u00e2tre pendant les vacances scolaires"}</p>
+            <p className="text-xl md:text-2xl text-[#dbcbff] max-w-2xl mx-auto">{"D\u00e9couvrir le th\u00e9\u00e2tre pendant les vacances scolaires"}</p>
           </motion.div>
         </div>
       </AuroraHero>
